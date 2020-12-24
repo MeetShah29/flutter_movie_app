@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Movie {
   final int id;
   final double popularity;
