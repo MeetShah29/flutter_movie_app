@@ -8,7 +8,7 @@ import 'package:movie_app/model/video_response.dart';
 
 class MovieRepository {
   static String mainUrl = "https://api.themoviedb.org/3";
-  final String apiKey = "dea6b6377065f68643ba5398bed9bfd4";
+  final String apiKey = "<Your Api Key>";
   final Dio _dio =
       Dio(); //Dio is powerful Http client for Dart, which supports Interceptors, Global configuration, FormData, Request Cancellation, File downloading, ConnectionTimeout etc.
   var getPopularUrl = '$mainUrl/movie/top_rated';
