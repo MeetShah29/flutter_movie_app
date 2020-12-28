@@ -1,35 +1,63 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_app/bloc/authentication_bloc/authentication_bloc.dart';
+import 'package:movie_app/bloc/authentication_bloc/authentication_event.dart';
+import 'package:movie_app/bloc/authentication_bloc/authentication_state_bloc.dart';
+import 'package:movie_app/bloc/simple_observer_bloc.dart';
+import 'package:movie_app/repository/user_repository.dart';
 import 'package:movie_app/screens/home_screen.dart';
+import 'package:movie_app/screens/login/login_screen.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  Bloc.observer = SimpleBlocObserver();
+  final UserRepository userRepository = UserRepository();
+  runApp(
+    BlocProvider(
+      create: (context) => AuthenticationBloc(userRepository: userRepository)
+      ..add(AuthenticationStarted()),
+      child: MyApp(
+        userRepository: userRepository,
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  final UserRepository _userRepository;
+
+  MyApp({UserRepository userRepository}) : _userRepository = userRepository;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: Color(0xff6a515e),
+        cursorColor: Color(0xff6a515e),
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is AuthenticationFailure) {
+            return LoginScreen(
+              userRepository: _userRepository,
+            );
+          }
+          if (state is AuthenticationSuccess) {
+            return HomeScreen(
+              firebaseUser: state.firebaseUser,
+            );
+          }
+          return Scaffold(
+            appBar: AppBar(),
+            body: Container(
+              child: Center(child: Text("Loading")),
+            ),
+          );
+        },
+      ),
     );
   }
 }
-

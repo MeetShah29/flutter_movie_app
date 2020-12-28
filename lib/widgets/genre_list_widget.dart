@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/bloc/get_movies_byGenre_bloc.dart';
 import 'package:movie_app/model/genre.dart';
 import 'package:movie_app/style/theme.dart' as Style;
-import 'package:movie_app/widgets/genre_movies.dart';
+import 'package:movie_app/widgets/genre_movies_widget.dart';
 
 class GenreList extends StatefulWidget {
   final List<Genre> genres;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/bloc/get_genres_bloc.dart';
 import 'package:movie_app/model/genre.dart';
 import 'package:movie_app/model/genre_response.dart';
-import 'package:movie_app/widgets/genre_list.dart';
+import 'package:movie_app/widgets/genre_list_widget.dart';
 
 class GenresScreen extends StatefulWidget {
   @override
@@ -26,7 +26,7 @@ class _GenresScreenState extends State<GenresScreen> {
             if (snapshot.data.error != null && snapshot.data.error.length > 0) {
               return _buildErrorWidget(snapshot.data.error);
             }
-            return _buildGenresWiget(snapshot.data);
+            return _buildGenresWidget(snapshot.data);
           } else if (snapshot.hasError) {
             return _buildErrorWidget(snapshot.error);
           } else {
@@ -62,7 +62,7 @@ class _GenresScreenState extends State<GenresScreen> {
     );
   }
 
-  Widget _buildGenresWiget(GenreResponse data){
+  Widget _buildGenresWidget(GenreResponse data){
     List<Genre> genres= data.genre;
     if(genres.length == 0){
       return Container(
