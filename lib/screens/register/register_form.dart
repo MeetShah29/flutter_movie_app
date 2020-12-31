@@ -6,6 +6,7 @@ import 'package:movie_app/bloc/authentication_bloc/authentication_event.dart';
 import 'package:movie_app/bloc/register_bloc/register_bloc.dart';
 import 'package:movie_app/bloc/register_bloc/register_event.dart';
 import 'package:movie_app/bloc/register_bloc/register_state.dart';
+import 'package:movie_app/net/firebase.dart';
 import 'package:movie_app/widgets/gradient_button_widget.dart';
 import 'package:movie_app/style/theme.dart' as Style;
 
@@ -67,7 +68,8 @@ class _LoginFormState extends State<RegisterForm> {
                   children: <Widget>[
                     Text('Registering...'),
                     CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Style.Colors.white),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Style.Colors.white),
                     )
                   ],
                 ),
@@ -80,6 +82,7 @@ class _LoginFormState extends State<RegisterForm> {
           BlocProvider.of<AuthenticationBloc>(context).add(
             AuthenticationLoggedIn(),
           );
+          userSetup(_emailController.text);
           Navigator.pop(context);
         }
       },
@@ -94,7 +97,7 @@ class _LoginFormState extends State<RegisterForm> {
                     style: TextStyle(color: Style.Colors.white),
                     controller: _emailController,
                     decoration: InputDecoration(
-                      icon: Icon(Icons.email,color: Style.Colors.white),
+                      icon: Icon(Icons.email, color: Style.Colors.white),
                       labelText: "Email",
                       labelStyle: TextStyle(color: Style.Colors.secondColor),
                     ),
@@ -109,7 +112,10 @@ class _LoginFormState extends State<RegisterForm> {
                     controller: _passwordController,
                     style: TextStyle(color: Style.Colors.white),
                     decoration: InputDecoration(
-                      icon: Icon(Icons.lock,color: Style.Colors.white,),
+                      icon: Icon(
+                        Icons.lock,
+                        color: Style.Colors.white,
+                      ),
                       labelText: "Password",
                       labelStyle: TextStyle(color: Style.Colors.secondColor),
                     ),
@@ -128,7 +134,6 @@ class _LoginFormState extends State<RegisterForm> {
                     height: 45,
                     onPressed: () {
                       if (isButtonEnabled(state)) {
-                        print(state);
                         _onFormSubmitted();
                       }
                     },

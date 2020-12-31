@@ -1,4 +1,5 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -6,13 +7,18 @@ import 'package:movie_app/bloc/get_movie_videos_bloc.dart';
 import 'package:movie_app/model/movie.dart';
 import 'package:movie_app/model/video.dart';
 import 'package:movie_app/model/video_response.dart';
+import 'package:movie_app/net/firebase.dart';
 import 'package:movie_app/screens/video_player_screen.dart';
+import 'package:movie_app/screens/wishlist_screen.dart';
 import 'package:movie_app/style/theme.dart' as Style;
 import 'package:movie_app/widgets/casts_widget.dart';
 import 'package:movie_app/widgets/movie_info_widget.dart';
 import 'package:movie_app/widgets/similar_movies_widget.dart';
 import 'package:sliver_fab/sliver_fab.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+FirebaseAuth auth = FirebaseAuth.instance;
+String uid = auth.currentUser.uid.toString();
 
 class MoviesDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -142,8 +148,33 @@ class _MoviesDetailScreenState extends State<MoviesDetailScreen> {
                         ],
                       ),
                     ),
+                    Column(
+                      children: [
+                        Container(
+                          height: 30.0,
+                          padding: EdgeInsets.only(right: 20.0),
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: Icon(Icons.favorite),
+                            color: Colors.pink,
+                            iconSize: 30.0,
+                            padding: EdgeInsets.only(bottom: 10.0),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          WishListScreen(uid)));
+                              updateWishlist(movie.title);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                     Padding(
-                      padding: EdgeInsets.only(left: 10.0, top: 20.0),
+                      padding: EdgeInsets.only(
+                        left: 10.0,
+                      ),
                       child: Text(
                         "OVERVIEW",
                         style: TextStyle(
@@ -156,15 +187,13 @@ class _MoviesDetailScreenState extends State<MoviesDetailScreen> {
                       height: 5.0,
                     ),
                     Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        movie.overview,
-                        style: TextStyle(
-                            color: Colors.white, fontSize: 12.0, height: 1.5),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
+                      padding:
+                          EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
+                      child: Text(movie.overview,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.0,
+                              height: 1.5)),
                     ),
                     MoviesInfo(
                       id: movie.id,
@@ -208,7 +237,7 @@ class _MoviesDetailScreenState extends State<MoviesDetailScreen> {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[Text("Error occured: $error")],
+        children: <Widget>[Text("Error occurred: $error")],
       ),
     );
   }
@@ -218,15 +247,17 @@ class _MoviesDetailScreenState extends State<MoviesDetailScreen> {
     return FloatingActionButton(
         backgroundColor: Style.Colors.secondColor,
         child: Icon(Icons.play_arrow),
-        onPressed: (){
-          Navigator.push(context, 
-          MaterialPageRoute(builder: (context)=>VideoPlayerScreen(controller: YoutubePlayerController(initialVideoId: videos[0].key,
-              flags:YoutubePlayerFlags(
-               forceHD: false,
-                autoPlay: true,
-              )
-          )
-          )));
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VideoPlayerScreen(
+                      controller: YoutubePlayerController(
+                          initialVideoId: videos[0].key,
+                          flags: YoutubePlayerFlags(
+                            forceHD: false,
+                            autoPlay: true,
+                          )))));
         });
   }
 }
